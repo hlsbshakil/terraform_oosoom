@@ -1,0 +1,215 @@
+/* Base Styles for Consistency */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    max-width: 900px; 
+    margin: 0 auto;
+    padding: 1rem;
+    background: #f4f6f8;
+    color: #333;
+    text-align: center; 
+}
+
+/* Banner Styling */
+.banner-container {
+    text-align: center;
+    margin-bottom: 1rem;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.banner-img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Navigation */
+.nav {
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #ddd;
+}
+.nav a {
+    text-decoration: none;
+    color: #666;
+    font-weight: 500;
+    font-size: 1.1rem;
+}
+
+/* Main Content Box Styling */
+.box {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    margin-bottom: 1.5rem;
+    border: 1px solid #ddd;
+}
+
+/* Inputs and Labels */
+label {
+    display: block;
+    margin-top: 1rem;
+    font-weight: 500;
+}
+input[type="text"], input[type="date"], input[type="number"], input[type="email"] {
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.25rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* Buttons */
+button {
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    color: white;
+    font-size: 1rem;
+    transition: opacity 0.2s;
+}
+button:hover {
+    opacity: 0.9;
+}
+
+/* Specific Page Styles: INDEX */
+.menu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    text-align: center;
+}
+.menu-btn {
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 2rem;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #333;
+    font-weight: 600;
+    font-size: 1.1rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.menu-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    border-color: #bbb;
+}
+.icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Specific Page Styles: ADD */
+.add-form-box {
+    max-width: 600px; /* Keep form centered and contained */
+    margin: 0 auto;
+    padding: 2rem;
+}
+#saveBtn {
+    margin-top: 1.5rem;
+    width: 100%;
+    background: #28a745;
+}
+
+/* Specific Page Styles: LIST */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+th, td {
+    text-align: left;
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+th {
+    background-color: #f8f9fa;
+    color: #555;
+}
+.expired {
+    color: #dc3545;
+    font-weight: bold;
+}
+.soon {
+    color: #ffc107;
+    font-weight: bold;
+}
+.safe {
+    color: #28a745;
+}
+.btn-del {
+    background: #dc3545;
+    padding: 5px 10px;
+}
+
+/* Specific Page Styles: SETTINGS */
+.settings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+#emailIn {
+    width: 70%;
+    margin-top: 0;
+}
+.box button {
+    width: auto;
+    padding: 0.5rem 1rem;
+    background: #007bff;
+}
+.btn-debug {
+    background: #6c757d;
+    width: 100%;
+    margin-top: 1rem;
+    padding: 1rem;
+}
+.debug-box {
+    background: #fff3cd; /* Yellow/light-orange background */
+    border: 1px solid #ffeeba;
+}
+/* Add to styles.css */
+.debug-box {
+    background: #fff3cd; 
+    border: 1px solid #ffeeba;
+}
+
+.small-text {
+    font-size: 0.9rem;
+}
+
+.status-message {
+    margin-top: 1rem; 
+    font-weight: bold;
+}
+
+.email-list-display {
+    margin-top: 1rem; 
+    padding-left: 1rem; 
+    color: #666;
+    text-align: left; /* Override body center alignment */
+}
+
+.debug-output {
+    margin-top: 1rem; 
+    font-size: 0.8rem; 
+    white-space: pre-wrap;
+    text-align: left; /* Override body center alignment */
+}
+
+/* Add this to your styles.css file */
+.footer-attribution {
+    margin-top: 3rem;
+    padding-top: 1rem;
+    border-top: 1px solid #ccc;
+    font-size: 0.75rem;
+    color: #888;
+    text-align: center;
+}

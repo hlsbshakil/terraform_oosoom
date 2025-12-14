@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <script src="config.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="banner-container"><img src="banner.jpg" alt="OOSOOM Banner" class="banner-img"></div>
+    <div class="nav"> <a href="index.html">🏠 Back to Home</a> </div>
+
+    <div class="settings-grid">
+        <div class="box">
+            <h3>📧 Email Notifications</h3>
+            <p class="small-text">Add an email to receive alerts, or click [x] to remove an existing one.</p>
+            
+            <input type="email" id="emailIn" placeholder="user@example.com">
+            <button onclick="manageEmail('subscribe')">Add</button>
+            
+            <div id="emailStatus" class="status-message"></div>
+            
+            <ul id="emailList" class="email-list-display"></ul>
+        </div>
+
+        <div class="box debug-box">
+            <h3>🛠️ Debug Zone</h3>
+            <p class="small-text">Force the system to check expiry dates right now.</p>
+            <button class="btn-debug" onclick="runCheck()">⚠️ Force Run Daily Check</button>
+            <pre id="debugOut" class="debug-output"></pre>
+        </div>
+    </div>
+
+    <footer class="footer-attribution">
+        Front-end UI generated and refactored with the assistance of Google Gemini 1.5 Flash.
+    </footer>
+
+<script>
+    const API_BASE = window.CONFIG ? window.CONFIG.API_BASE : "";
+    
+    // --- Load Existing Subscriptions ---
+    async function loadEmails() {
+        try {
+            // Use 'list' action to retrieve all emails from SNS topic
+            const res = await fetch(`${API_BASE}/email`, { method: 'POST', body: JSON.stringify({action:'list'}) });
+            const data = await res.json();
+            const list = document.getElementById('emailList');
+            
+            // SIMPLIFIED RENDERING: Only display the email and the unsubscribe link
+            list.innerHTML = data.emails.map(e => {
+                // Ensure the endpoint value is not null/empty before rendering
+                if (e.email && e.email !== 'PendingConfirmation') {
+                    return `<li>${e.email} <a href="#" onclick="manageEmail('unsubscribe','${e.email}')" style="color:red">[x]</a></li>`;
+                }
+                return '';
+            }).join('');
+            
+        } catch(e) {
+            console.error("Error loading emails:", e);
+            document.getElementById('emailList').innerHTML = "<li>Error loading subscriptions. Check browser console.</li>";
+        }
+    }
+    
+    // --- Handle Subscribe/Unsubscribe Action ---
+    async function manageEmail(action, emailOverride) {
+        const emailInput = document.getElementById('emailIn');
+        // Use emailOverride (from list link) or the value from the input box
+        const email = emailOverride || emailInput.value;
+        if(!email) {
+            document.getElementById('emailStatus').innerText = "Please enter an email address.";
+            return;
+        }
+        
+        const statusEl = document.getElementById('emailStatus');
+        statusEl.innerText = "Processing...";
+        
+        const res = await fetch(`${API_BASE}/email`, { method: 'POST', body: JSON.stringify({email, action}) });
+        
+        // Check if the response is valid JSON before parsing
+        const contentType = res.headers.get("content-type");
+        let data = {};
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+            data = await res.json();
+        }
+        
+        // Display message from Lambda or a default
+        statusEl.innerText = data.message || (action === 'subscribe' ? "Subscription requested (check email)." : "Action complete.");
+        
+        // Clear input box only if action originated from there (not from the [x] link)
+        if (!emailOverride) {
+            emailInput.value = '';
+        }
+        
+        // Refresh the list after the action
+        loadEmails();
+        
+        // Clear status message after a short delay
+        setTimeout(() => { statusEl.innerText = ''; }, 5000); 
+    }
+    
+    // --- Handle Manual Daily Check Trigger ---
+    async function runCheck() {
+        if(!confirm("Run check? This will process all documents and send alerts if any are due.")) return;
+        document.getElementById('debugOut').innerText = "Running check...";
+        
+        const res = await fetch(`${API_BASE}/test-alerts`, { method: 'POST' });
+        const txt = await res.text();
+        
+        document.getElementById('debugOut').innerText = txt;
+    }
+    
+    // Load the list of emails when the page first loads
+    window.onload = loadEmails;
+</script>
+</body>
+</html>

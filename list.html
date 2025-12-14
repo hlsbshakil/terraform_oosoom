@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Current Documents</title>
+    <script src="config.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="banner-container"><img src="banner.jpg" alt="OOSOOM Banner" class="banner-img"></div>
+    <div class="nav"> <a href="index.html">🏠 Back to Home</a> </div>
+
+    <div class="box">
+        <h2 style="margin-top:0">📂 Your Documents</h2>
+        <p id="loading" style="text-align:center;">Loading your documents...</p>
+        
+        <table id="docTable" style="display:none;">
+            <thead>
+                <tr><th>Name</th><th>Expiry</th><th>Alert Days</th><th>Status</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
+
+<script>
+    // Use the dynamic configuration from config.js
+    const API_BASE = window.CONFIG ? window.CONFIG.API_BASE : "";
+    
+    async function loadDocuments() {
+        const tbody = document.getElementById('tableBody');
+        const loading = document.getElementById('loading');
+        const table = document.getElementById('docTable');
+        
+        try {
+            const res = await fetch(`${API_BASE}/documents`);
+            const data = await res.json();
+            
+            loading.style.display = 'none';
+            tbody.innerHTML = '';
+            
+            if (data.length === 0) {
+                loading.innerText = "No documents found.";
+                loading.style.display = 'block';
+                return;
+            }
+            
+            table.style.display = 'table';
+            const today = new Date().toISOString().split('T')[0];
+
+            data.forEach(doc => {
+                let color = "safe"; let text = "OK";
+                
+                // Safely parse alertDays as an integer (using the fix from before)
+                const alertDaysNum = parseInt(doc.alertDays) || 30;
+
+                if (doc.expiryDate < today) { 
+                    color = "expired"; 
+                    text = "EXPIRED"; 
+                } else {
+                    const daysLeft = (new Date(doc.expiryDate) - new Date()) / (86400000);
+                    
+                    if (daysLeft <= alertDaysNum) { 
+                        color = "soon"; 
+                        text = "Expiring Soon"; 
+                    }
+                }
+                
+                const jsName = doc.documentName.replace(/'/g, "\\'");
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${doc.documentName}</td>
+                    <td>${doc.expiryDate}</td>
+                    <td>${doc.alertDays || 30} days</td>
+                    <td class="${color}">${text} ${doc.alertsEnabled!==false ? '🔔' : '🔕'}</td>
+                    <td>
+                        <button class="btn-del" onclick="deleteItem('${jsName}')">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+        } catch(e) { 
+            loading.innerText = "Error fetching data from API.";
+            loading.style.color = 'red';
+            console.error(e); 
+        }
+    }
+    
+    async function deleteItem(name) {
+        if(!confirm("Delete '" + name + "'?")) return;
+        await fetch(`${API_BASE}/document`, { method: 'DELETE', body: JSON.stringify({documentName: name}) });
+        loadDocuments();
+    }
+    
+    window.onload = loadDocuments;
+</script>
+<div class="menu-grid">
+        </div>
+    
+    <footer class="footer-attribution">
+        Front-end UI generated and refactored with the assistance of Google Gemini 1.5 Flash.
+    </footer>
+</body>
+</html>
